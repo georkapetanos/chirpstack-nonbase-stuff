@@ -1,0 +1,50 @@
+version: "2"
+
+volumes:
+  postgresqldata:
+  redisdata:
+  chirpstack-network-server-config:
+  chirpstack-application-server-config:
+  postgresql-config:
+  mosquitto-config:
+  
+services:
+  chirpstack-network-server:
+    image: balena-chirpstack-docker/chirpstack-network-server
+    build: ./chirpstack-network-server
+    ports:
+      - 8000:8000
+    volumes:
+      - chirpstack-network-server-config:/etc/chirpstack-network-server
+    depends_on:
+      - postgresql
+      - mosquitto
+  chirpstack-application-server:
+    image: balena-chirpstack-docker/chirpstack-application-server
+    build: ./chirpstack-application-server
+    ports:
+      - 8080:8080
+    volumes:
+      - chirpstack-application-server-config:/etc/chirpstack-application-server
+    depends_on:
+      - chirpstack-network-server
+  redis:
+    image: balena-chirpstack-docker/redis
+    build: ./redis
+    volumes:
+      - redisdata:/data
+  mosquitto:
+    image: balena-chirpstack-docker/mosquitto
+    build: ./mosquitto
+    ports:
+      - 1883:1883
+    volumes:
+      - mosquitto-config:/mosquitto/config/
+  postgresql:
+    image: balena-chirpstack-docker/postgresql
+    environment:
+      - POSTGRES_PASSWORD=root
+    build: ./postgresql
+    volumes:
+      - postgresqldata:/var/lib/postgresql/data
+      - postgresql-config:/docker-entrypoint-initdb.d
