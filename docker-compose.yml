@@ -5,10 +5,21 @@ volumes:
   redisdata:
   chirpstack-network-server-config:
   chirpstack-application-server-config:
+  chirpstack-fuota-server-config:
   postgresql-config:
   mosquitto-config:
   
 services:
+  chirpstack-fuota-server:
+    image: balena-chirpstack-docker/chirpstack-fuota-server
+    build: ./chirpstack-fuota-server
+    ports:
+      - 8090:8090
+      - 8070:8070
+    depends_on:
+      - postgresql
+    #volumes:
+    #  - chirpstack-fuota-server-config:/etc/chirpstack-fuota-server
   chirpstack-network-server:
     image: balena-chirpstack-docker/chirpstack-network-server
     build: ./chirpstack-network-server
