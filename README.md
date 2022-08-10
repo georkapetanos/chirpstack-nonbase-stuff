@@ -4,6 +4,7 @@
 
 - chirpstack-application-server
 - chirpstack-network-server
+- chirpstack-fuota-server
 - mosquitto
 - postgresql
 - redis
